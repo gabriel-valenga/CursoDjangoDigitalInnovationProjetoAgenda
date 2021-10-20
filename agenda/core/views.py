@@ -6,8 +6,8 @@ from django.contrib import messages
 
 
 def local_evento(request, titulo_evento):
-    evento = Evento.objects.get(titulo=titulo_evento)
-    return HttpResponse(evento.local)
+    evento_ = Evento.objects.get(titulo=titulo_evento)
+    return HttpResponse(evento_.local)
 
 
 @login_required(login_url='/login/')
@@ -42,7 +42,11 @@ def logout_user(request):
 
 @login_required(login_url='/login/')
 def evento(request):
-    return render(request, 'evento.html')
+    id_evento = request.GET.get('id')
+    dados = {}
+    if id_evento:
+        dados['evento'] = Evento.objects.get(id=id_evento)
+    return render(request, 'evento.html', dados)
 
 
 @login_required(login_url='/login/')
@@ -53,9 +57,29 @@ def submit_evento(request):
         local = request.POST.get('local')
         descricao = request.POST.get('descricao')
         usuario = request.user
-        Evento.objects.create(titulo=titulo,
-                              data=data,
-                              local=local,
-                              descricao=descricao,
-                              usuario=usuario)
+        id = request.POST.get('id')
+        if id:
+            evento_ = Evento.objects.get(id=id)
+            if evento_.usuario == usuario:
+                evento_.titulo = titulo
+                evento_.data = data
+                evento_.local = local
+                evento_.descricao = descricao
+                evento_.save()
+
+        else:
+            Evento.objects.create(titulo=titulo,
+                                  data=data,
+                                  local=local,
+                                  descricao=descricao,
+                                  usuario=usuario)
+    return redirect('/')
+
+
+@login_required(login_url='/login/')
+def delete_evento(request, id_evento):
+    usuario = request.user
+    evento_ = Evento.objects.get(id=id_evento)
+    if usuario == evento_.usuario:
+        evento_.delete()
     return redirect('/')

@@ -18,3 +18,6 @@ class Evento(models.Model):
 
     def get_data(self):
         return self.data.strftime('%d/%m/%Y %H:%M')
+
+    def get_data_input(self):
+        return self.data.strftime('%Y-%m-%dT%H:%M')

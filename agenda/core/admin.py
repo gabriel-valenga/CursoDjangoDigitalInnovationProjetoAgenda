@@ -3,7 +3,7 @@ from core.models import Evento
 
 
 class EventoAdmin(admin.ModelAdmin):
-    list_display = ('titulo', 'data', 'datacriacao')
+    list_display = ('id', 'titulo', 'data', 'datacriacao')
     list_filter = ('usuario', 'data')
 
 

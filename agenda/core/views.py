@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.http.response import Http404, JsonResponse
+from django.utils import timezone as djangotimezone
 
 
 def local_evento(request, titulo_evento):
@@ -14,7 +15,9 @@ def local_evento(request, titulo_evento):
 @login_required(login_url='/login/')
 def lista_eventos(request):
     usuario = request.user
-    eventos = Evento.objects.filter(usuario=usuario)
+    data_atual = djangotimezone.now()
+    eventos = Evento.objects.filter(usuario=usuario,
+                                    data__gte=data_atual)
     dados = {'eventos': eventos}
     return render(request, 'agenda.html', dados)
 
@@ -96,3 +99,12 @@ def json_lista_evento(request, id_usuario):
     usuario = User.objects.get(id=id_usuario)
     evento_ = Evento.objects.filter(usuario=usuario).values('id', 'titulo')
     return JsonResponse(list(evento_), safe=False)
+
+@login_required(login_url='/login/')
+def historico(request):
+    usuario = request.user
+    data_atual = djangotimezone.now()
+    eventos_ = Evento.objects.filter(usuario=usuario,
+                                     data__lt=data_atual)
+    dados = {'eventos': eventos_}
+    return render(request, 'historico.html', dados)

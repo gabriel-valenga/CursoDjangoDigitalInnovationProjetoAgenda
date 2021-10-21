@@ -1,0 +1,20 @@
+{% extends "model-page.html" %}
+
+{% block content %}
+
+    <h2>Histórico de Eventos</h2>
+    <a href="../">
+        <button type="button">Voltar</button>
+    </a>
+
+    <ul style="font-size:18px">
+    {% for evento in eventos %}
+        <li>
+            <div style="color:red">
+                {{ evento.titulo }} - {{ evento.get_data }}
+            </div>
+        </li>
+    {% endfor %}
+    </ul>
+
+{% endblock %}

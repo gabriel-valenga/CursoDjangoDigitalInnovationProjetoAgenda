@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime, timezone
+from datetime import timedelta
+from django.utils import timezone as djangotimezone
 
 
 class Evento(models.Model):
@@ -24,7 +25,13 @@ class Evento(models.Model):
         return self.data.strftime('%Y-%m-%dT%H:%M')
 
     def get_evento_atrasado(self):
-        if self.data < datetime.now(timezone.utc):
+        if self.data < djangotimezone.now():
+            return True
+        else:
+            return False
+
+    def get_evento_inicio_proximo(self):
+        if (self.data - djangotimezone.now()) <= timedelta(hours=1):
             return True
         else:
             return False

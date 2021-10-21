@@ -3,7 +3,6 @@ from core.models import Evento, User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from datetime import datetime, timedelta
 from django.http.response import Http404, JsonResponse
 
 
@@ -15,9 +14,7 @@ def local_evento(request, titulo_evento):
 @login_required(login_url='/login/')
 def lista_eventos(request):
     usuario = request.user
-    data_atual = datetime.now() - timedelta(hours=1)
-    eventos = Evento.objects.filter(usuario=usuario,
-                                    data__gt=data_atual)
+    eventos = Evento.objects.filter(usuario=usuario)
     dados = {'eventos': eventos}
     return render(request, 'agenda.html', dados)
 
